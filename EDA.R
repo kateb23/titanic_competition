@@ -10,53 +10,62 @@ tidymodels_prefer()
 set.seed(1989)
 
 # Data import ----
-load("tit_setup.Rdata")
+load("tita_setup.Rdata")
 
 # Create EDA data set to analyze ----
-tit_eda <- tit_train %>% 
+tita_eda <- tita_train %>% 
   slice_sample(prop = 0.3)
 
 # Missingness ----
-naniar::miss_var_summary(tit_eda)
+naniar::miss_var_summary(tita_eda)
   # cabin (78.5%) and age (20.4%) missing
 
 
 # Outcome variable ####
-skimr::skim_without_charts(tit_eda)
-tit_eda %>% count(survived)
+skimr::skim_without_charts(tita_eda)
+tita_eda %>% count(survived)
   # pretty even 
 
 
 # Quantitative variables ####
-ggplot(tit_eda, aes(pclass)) +
+ggplot(tita_eda, aes(pclass)) +
   geom_histogram(bins = 3)
   # not too skewed
   # more of factor 
-ggplot(tit_eda, aes(age)) +
+ggplot(tita_eda, aes(age)) +
   geom_histogram(bins = 20)
   # pretty normal distribution, some missingness, some outliers 
-ggplot(tit_eda, aes(sib_sp)) +
+ggplot(tita_eda, aes(sib_sp)) +
   geom_bar()
-tit_eda %>% count(sib_sp)
+tita_eda %>% count(sib_sp)
   # very skewed to 0 and 1 (8 highest)
   # also more of factor 
-ggplot(tit_eda, aes(parch)) +
+ggplot(tita_eda, aes(parch)) +
   geom_bar()
-tit_eda %>% count(parch)
+tita_eda %>% count(parch)
   # very skewed to 0, 1, and 2 (6 highest)
   # also more of factor
-tit_eda %>%
+tita_eda %>%
   mutate(ticket = as.numeric(ticket)) %>% 
   ggplot(aes(ticket)) + 
   geom_histogram(bins = 60)
 # non finite values 
+ggplot(tita_eda, aes(fare)) +
+  geom_histogram(bins = 20)
+  # slight right skew
 
 # Qualitative variables ####
-tit_eda %>% count(sex)
+tita_eda %>% count(sex)
   # more males 
+tita_eda %>% count(cabin) %>% view()
+  # 45 and lots of missing
+tita_eda %>% count(embarked)
+  # C, Q, S (most S)
 
 
 # NOTES ####
 # make passenger_id as "id"
-# NLP for name?
+# NLP for name? or something with prefix?
 # what to do about ticket number...
+# break cabin into groups by letter? (A-G, NA)
+# what to do about missingness...
